@@ -15,7 +15,7 @@
             return $.ajax({
                 url: "${make_url(['custom',app,'terminal'])}",
                 type: 'POST',
-                data: {'command':command}
+                data: {'command':btoa(command)}
             });
         };
         

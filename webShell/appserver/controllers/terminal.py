@@ -3,6 +3,7 @@ import cherrypy
 import json
 import subprocess
 import shlex
+import base64
 
 import splunk, splunk.util
 import splunk.appserver.mrsparkle.controllers as controllers
@@ -31,15 +32,14 @@ class TerminalController(controllers.BaseController):
     @expose_page(must_login=True, methods=['POST'])
     @route('/', methods=['POST'])
     def process(self, **kwargs):
-        command = kwargs.get('command')
-        splitCommand = shlex.split(command) if os.name == 'posix' else command.split(' ')
+        command = base64.b64decode(kwargs.get('command'))
        
         if not command:
             error = "No command"
             return self.render_json(dict(success=False, payload=error)) 
         
         try:
-            output = subprocess.check_output(splitCommand, shell=True)
+            output = subprocess.check_output(command, shell=True)
            
             if output:
 				payload = output
